@@ -1,44 +1,58 @@
-const post = require('./../model/pub.model.js');
+
+const Pub = require('../model/pub.model.js');
+const Com = require('../model/com.model.js');
 
 exports.getAll = async (req, res) => {
   try {
-    const listPost = await post.findAll({
+    const listPost = await Pub.findAll({
       order: [
         ['createdAt', 'DESC'],
-        [Comment, 'createdAt', 'ASC']
+        [{ model: Com, as: 'comments' }, 'createdAt', 'ASC'] 
       ],
-      include: [{ model: Comment }]
+      include: [
+        { 
+          model: Com, 
+          as: 'comments' 
+        }
+      ]
     });
-    res.status(200).json(listPost);
+
+    return res.status(200).json(listPost);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 exports.create = async (req, res) => {
   try {
-    const newPost = await post.create({
-        content : req.body.content,
+    const newPost = await Pub.create({
+      content: req.body.content,
+      userId: req.payload?.userId 
     });
-    res.status(201).json(newPost);
+
+    return res.status(201).json(newPost);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
+  }
 };
-}
 
 exports.addComment = async (req, res) => {
   try {
-    const post = await post.findByPk(req.params.id);
-    if (!post) {
+  
+    const targetPost = await Pub.findByPk(req.params.id);
+
+    if (!targetPost) {
       return res.status(404).json({ error: 'Post not found' });
     }
-    const comment = await Comment.create({
+
+    const comment = await Com.create({
       content: req.body.content,
-      postId: post.id,
-      userId: req.user.id
+      postId: targetPost.id,
+      userId: req.payload?.userId || req.user?.id // Récupération de l'ID depuis le middleware
     });
-    res.status(201).json(comment);
+
+    return res.status(201).json(comment);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };

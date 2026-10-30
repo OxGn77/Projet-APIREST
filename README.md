@@ -1,5 +1,12 @@
 # Projet-APIREST
 
+Pseudo participant
+OxGn77 : Matthéo Liberge
+IziiDown : WIlly VU
+
+
+Avant d'utiliser, merci de faire dans le terminal npm init, puis npm run
+
 Il vous faudra un fichier .env avec :
 PORT=3001
 JWT_SECRET=
