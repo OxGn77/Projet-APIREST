@@ -17,11 +17,10 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const post = await post.create({
+    const newPost = await post.create({
         content : req.body.content,
-        userId : req.user.id
     });
-    res.status(201).json(post);
+    res.status(201).json(newPost);
   } catch (error) {
     res.status(500).json({ error: error.message });
 };
