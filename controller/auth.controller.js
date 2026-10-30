@@ -11,7 +11,7 @@ exports.login = async (req, res) => {
     if (!valid) {
         return res.status(401).json({ message: 'Invalid username or password' });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
     
     return res.status(200).json({
       token: token,
@@ -53,10 +53,26 @@ exports.register = async (req, res) => {
 }
 
 exports.me = async (req, res) => {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
-}
+  try {
+    
+    const user = await User.findByPk(req.payload.userId, {
+      attributes: ['id', 'username']
+    });
 
+   
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({
+      id: user.id,
+      username: user.username
+    });
+
+  } catch (e) {
+    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
 exports.logout = async (req, res) => {
     res.json({ message: 'Logged out' });
 }
