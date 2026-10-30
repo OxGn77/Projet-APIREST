@@ -6,9 +6,6 @@ const Com = database.define('Com', {
         type: DataTypes.STRING(500),
         allowNull: false
     },
-    date: {
-        type: TIMESTAMP_WITH_TIME_ZONE
-    }
 }, {
     tableName: "com"
 });
