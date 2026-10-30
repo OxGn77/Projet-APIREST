@@ -26,4 +26,19 @@ exports.register = async (req, res) => {
         timeCost: 5,
     });
 
+     const newUser = await User.create({
+        username: req.body.username,
+        password: hash
+    });
+    res.status(201).json(newUser);
+
+}
+
+exports.me = async (req, res) => {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+}
+
+exports.logout = async (req, res) => {
+    res.json({ message: 'Logged out' });
 }
