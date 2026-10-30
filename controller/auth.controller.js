@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../model/user.model.js');
 
 exports.login = async (req, res) => {
-    let user = await User.findOne({ username: req.body.username });
+    let user = await User.findOne({ where :{ username: req.body.username }});
     if (!user) {
         return res.status(401).json({ message: 'Invalid username or password' });
     }
@@ -11,12 +11,19 @@ exports.login = async (req, res) => {
     if (!valid) {
         return res.status(401).json({ message: 'Invalid username or password' });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-}
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    
+    return res.status(200).json({
+      token: token,
+      user: {
+        id: user.id,
+        username: user.username
+        }})
+    }
 
 exports.register = async (req, res) => {
-    let user = await User.findOne({ username: req.body.username });
+    let user = await User.findOne({ 
+        where :{ username: req.body.username } });
     if (user) {
         return res.status(400).json({ message: 'Username already used' });
     }
@@ -30,7 +37,18 @@ exports.register = async (req, res) => {
         username: req.body.username,
         password: hash
     });
-    res.status(201).json(newUser);
+
+    const token = jwt.sign(
+      { userId: newUser.id },
+      process.env.JWT_SECRET 
+    );
+
+    return res.status(201).json({
+      token: token,
+      user: {
+        id: newUser.id,
+        username: newUser.username
+        }})
 
 }
 
