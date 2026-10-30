@@ -3,7 +3,7 @@
 Il vous faudra un fichier .env avec :
 PORT=3001
 JWT_SECRET=
-DB_PORT=8889
+DB_PORT=8889 (MAC) ou 3306 (Windows)
 DB_HOST=localhost
 DB_USER=
 DB_PASSWORD=
